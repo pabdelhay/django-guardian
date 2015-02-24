@@ -14,6 +14,7 @@ from itertools import groupby
 from guardian.compat import basestring
 from guardian.compat import get_user_model
 from guardian.core import ObjectPermissionChecker
+from guardian.ctypes import get_ctype_from_polymorphic
 from guardian.exceptions import MixedContentTypeError
 from guardian.exceptions import WrongAppError
 from guardian.utils import get_anonymous_user
@@ -155,7 +156,7 @@ def get_perms_for_model(cls):
         model = models.get_model(app_label, model_name)
     else:
         model = cls
-    ctype = ContentType.objects.get_for_model(model)
+    ctype = get_ctype_from_polymorphic(model)
     return Permission.objects.filter(content_type=ctype)
 
 def get_users_with_perms(obj, attach_perms=False, with_superusers=False,
@@ -194,7 +195,7 @@ def get_users_with_perms(obj, attach_perms=False, with_superusers=False,
         {<User: joe>: [u'change_flatpage']}
 
     """
-    ctype = ContentType.objects.get_for_model(obj)
+    ctype = get_ctype_from_polymorphic(obj)
     if not attach_perms:
         # It's much easier without attached perms so we do it first if that is
         # the case
@@ -260,7 +261,7 @@ def get_groups_with_perms(obj, attach_perms=False):
         {<Group: admins>: [u'change_flatpage']}
 
     """
-    ctype = ContentType.objects.get_for_model(obj)
+    ctype = get_ctype_from_polymorphic(obj)
     if not attach_perms:
         # It's much easier without attached perms so we do it first if that is
         # the case

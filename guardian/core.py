@@ -5,6 +5,7 @@ from itertools import chain
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 
+from guardian.ctypes import get_ctype_from_polymorphic
 from guardian.utils import get_identity
 from guardian.utils import get_user_obj_perms_model
 from guardian.utils import get_group_obj_perms_model
@@ -63,7 +64,7 @@ class ObjectPermissionChecker(object):
         if self.user and not self.user.is_active:
             return []
         User = get_user_model()
-        ctype = ContentType.objects.get_for_model(obj)
+        ctype = get_ctype_from_polymorphic(obj)
         key = self.get_local_cache_key(obj)
         if not key in self._obj_perms_cache:
 
@@ -120,6 +121,6 @@ class ObjectPermissionChecker(object):
         """
         Returns cache key for ``_obj_perms_cache`` dict.
         """
-        ctype = ContentType.objects.get_for_model(obj)
+        ctype = get_ctype_from_polymorphic(obj)
         return (ctype.id, obj.pk)
 
