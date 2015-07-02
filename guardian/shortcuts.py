@@ -386,7 +386,7 @@ def get_objects_for_user(user, perms, klass=None, use_groups=True, any_perm=Fals
         raise WrongAppError("Cannot determine content type")
     elif ctype is None and klass is not None:
         queryset = _get_queryset(klass)
-        ctype = ContentType.objects.get_for_model(queryset.model)
+        ctype = get_ctype_from_polymorphic(queryset.model)
     elif ctype is not None and klass is None:
         queryset = _get_queryset(ctype.model_class())
     else:
@@ -434,7 +434,6 @@ def get_objects_for_user(user, perms, klass=None, use_groups=True, any_perm=Fals
         # must retrieve object A and B.
         elif len(global_perms) > 0 and (len(codenames) > 0):
             has_global_perms = True
-
 
     # Now we should extract list of pk values for which we would filter queryset
     user_model = get_user_obj_perms_model(queryset.model)
@@ -579,7 +578,7 @@ def get_objects_for_group(group, perms, klass=None, any_perm=False, accept_globa
         raise WrongAppError("Cannot determine content type")
     elif ctype is None and klass is not None:
         queryset = _get_queryset(klass)
-        ctype = ContentType.objects.get_for_model(queryset.model)
+        ctype = get_ctype_from_polymorphic(queryset.model)
     elif ctype is not None and klass is None:
         queryset = _get_queryset(ctype.model_class())
     else:

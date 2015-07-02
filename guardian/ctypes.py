@@ -5,9 +5,12 @@ def get_ctype_from_polymorphic(obj):
     Special helper function to return BASE polymorphic ctype id
     """
     if hasattr(obj, 'polymorphic_model_marker'):
-        "For polymorphic models"
-        superclasses = list(obj.__class__.mro())
-        
+        try:
+            superclasses = list(obj.__class__.mro())
+        except TypeError:
+            # obj is an object so mro() need to be called with the obj.
+            superclasses = list(obj.__class__.mro(obj))
+
         polymorphic_superclasses = list()
         for sclass in superclasses:
             if hasattr(sclass, 'polymorphic_model_marker'):
@@ -21,7 +24,7 @@ def get_ctype_from_polymorphic(obj):
             root_polymorphic_class = polymorphic_superclasses[-2]
         ctype = ContentType.objects.get_for_model(root_polymorphic_class)
 
-    else:    
+    else:
         ctype = ContentType.objects.get_for_model(obj)
 
     return ctype
