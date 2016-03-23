@@ -95,3 +95,4 @@ def get_obj_perms(parser, token):
                                            "argument should be in quotes")
     context_var = context_var[1:-1]
     return ObjectPermissionsNode(for_whom, obj, context_var)
+
